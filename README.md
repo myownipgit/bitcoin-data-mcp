@@ -55,6 +55,8 @@ npm start
 
 The server runs on stdio, which allows it to be used as a plugin for AI models and tools that support the Model Context Protocol.
 
+For detailed instructions on integrating with Claude Desktop, see the [Claude Desktop Integration Guide](docs/claude-desktop-integration.md).
+
 ## Integration with Claude Desktop
 
 This MCP server can be integrated with Claude Desktop to give Claude direct access to Bitcoin blockchain data without requiring internet access from Claude itself.
@@ -86,6 +88,24 @@ This integration allows Claude to access real-time Bitcoin data and perform anal
 ```bash
 # Run in development mode (build and start)
 npm run dev
+
+# Run tests to verify server functionality
+npm test
+```
+
+## Docker Support
+
+You can also run the Bitcoin Data MCP Server in a Docker container:
+
+```bash
+# Build the Docker image
+docker build -t bitcoin-data-mcp .
+
+# Run the container
+docker run -i bitcoin-data-mcp
+
+# Alternatively, use docker-compose
+docker-compose up
 ```
 
 ## Data Sources

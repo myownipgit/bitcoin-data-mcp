@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git remote set-url:*)",
+      "Bash(git fetch:*)",
+      "mcp__github__get_file_contents",
+      "mcp__github__create_or_update_file",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm install:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm test)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git rebase:*)",
+      "Bash(git checkout:*)",
+      "Bash(gh pr create:*)"
+    ],
+    "deny": []
+  }
+}
