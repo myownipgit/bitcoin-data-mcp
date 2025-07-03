@@ -162,12 +162,31 @@ For operations involving multiple addresses or deep transaction analysis, you ma
 2. Limiting the trace depth in lineage analysis
 3. Breaking up complex queries into simpler ones
 
+## Integration with Other Tools
+
+### Slack Integration
+
+You can integrate the Bitcoin Data MCP Server with Claude via Slack by:
+
+1. Setting up the MCP server as described above
+2. Configuring your Slack workspace to use Claude
+3. When interacting with Claude in Slack, you can ask Bitcoin-related questions that will be processed through this MCP server
+
+### Web Applications
+
+The Bitcoin Data MCP Server can be used in web applications by:
+
+1. Running the server in a Docker container or as a Node.js process
+2. Using the MCP protocol to communicate with the server from your web application
+3. Processing Bitcoin data in your application without direct API access
+
 ## Security Considerations
 
 - The Bitcoin Data MCP Server doesn't store or log any sensitive information
 - All data is sourced from public APIs and blockchain explorers
 - No private keys or credentials are ever used or requested
-- The server runs locally and communicates only with Claude Desktop via stdio
+- The server runs locally and communicates only with the client (Claude Desktop, Slack, etc.) via stdio
+- Uses rate limiting and caching to prevent API abuse
 
 ## Support and Feedback
 
@@ -175,3 +194,4 @@ For issues related to:
 
 - The Bitcoin Data MCP Server: Create an issue on the GitHub repository
 - Claude Desktop integration: Contact Anthropic support through the Claude Desktop application
+- API limitations: Check the respective API documentation for Blockstream.info, CoinGecko, and Mempool.space
