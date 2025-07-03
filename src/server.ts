@@ -5,14 +5,14 @@
  * Free data sources: Blockstream.info, CoinGecko free tier, Mempool.space
  */
 
-import { Server } from '@modelcontextprotocol/sdk/server';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/StdioServerTransport';
+import { Server } from '@modelcontextprotocol/sdk/server/index';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
 import {
   CallToolRequestSchema,
   ErrorCode,
   ListToolsRequestSchema,
   McpError,
-} from '@modelcontextprotocol/sdk/shared/types';
+} from '@modelcontextprotocol/sdk/types';
 import axios from 'axios';
 import NodeCache from 'node-cache';
 
@@ -464,7 +464,7 @@ class BitcoinDataMCP {
       ]
     }));
 
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request: any) => {
       const { name, arguments: args } = request.params;
 
       try {
@@ -784,10 +784,10 @@ class BitcoinDataMCP {
   private async handleTraceCoinLineage(args: any) {
     const { txid, output_index, depth = 3 } = args;
     
-    const result = {
+    const result: any = {
       starting_point: { txid, output_index },
       trace_depth: depth,
-      lineage: [],
+      lineage: [] as any[],
       analysis: {
         note: "Basic lineage tracing implemented. Full graph analysis requires additional data sources."
       }
