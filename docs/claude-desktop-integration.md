@@ -33,7 +33,9 @@ npm start
 
 Keep this terminal window open and running.
 
-### 2. Configure Claude Desktop
+### 2. Configure Claude Desktop to Use the MCP Server
+
+#### Option A: Run as Node.js Process (Recommended for Development)
 
 1. Open Claude Desktop
 2. Click on the settings icon (gear/cog)
@@ -45,6 +47,25 @@ Keep this terminal window open and running.
    - **Command**: The full path to your server launch script (e.g., `/path/to/bitcoin-data-mcp/dist/server.js`)
    - **Working Directory**: The full path to your bitcoin-data-mcp directory
 6. Click "Save" or "Add"
+
+#### Option B: Run as Docker Container (Recommended for Production)
+
+1. Build and start the Docker container:
+   ```bash
+   cd bitcoin-data-mcp
+   docker-compose up -d
+   ```
+
+2. Open Claude Desktop
+3. Click on the settings icon (gear/cog)
+4. Navigate to "Tools" or "MCP Connections" section
+5. Click "Add Tool" or "Add Connection"
+6. Enter the following details:
+   - **Name**: Bitcoin Data MCP
+   - **Connection Type**: stdio
+   - **Command**: `docker`
+   - **Arguments**: `exec -i bitcoin-data-mcp node dist/server.js`
+7. Click "Save" or "Add"
 
 ### 3. Verify the Connection
 
@@ -89,12 +110,36 @@ Combine Claude's reasoning with Bitcoin data:
 - All data is sourced from public APIs and may have slight delays
 - For critical financial decisions, always verify data with multiple sources
 
-## Additional Notes
+## Integration with Other Tools
 
-- The server communicates with Claude Desktop through stdio, keeping your data local
-- No API keys are required for the basic functionality
-- All API calls are made from your computer, not from Claude's servers
+### Slack Integration
+
+You can integrate the Bitcoin Data MCP Server with Claude via Slack by:
+
+1. Setting up the MCP server as described above
+2. Configuring your Slack workspace to use Claude
+3. When interacting with Claude in Slack, you can ask Bitcoin-related questions that will be processed through this MCP server
+
+### Web Applications
+
+The Bitcoin Data MCP Server can be used in web applications by:
+
+1. Running the server in a Docker container or as a Node.js process
+2. Using the MCP protocol to communicate with the server from your web application
+3. Processing Bitcoin data in your application without direct API access
+
+## Security Considerations
+
+- The Bitcoin Data MCP Server doesn't store or log any sensitive information
+- All data is sourced from public APIs and blockchain explorers
+- No private keys or credentials are ever used or requested
+- The server runs locally and communicates only with the client (Claude Desktop, Slack, etc.) via stdio
+- Uses rate limiting and caching to prevent API abuse
 
 ## Feedback and Contributions
 
-If you encounter issues or have suggestions for improving the Claude Desktop integration, please open an issue or pull request on the GitHub repository.
+For issues related to:
+
+- The Bitcoin Data MCP Server: Create an issue on the GitHub repository
+- Claude Desktop integration: Contact Anthropic support through the Claude Desktop application
+- API limitations: Check the respective API documentation for Blockstream.info, CoinGecko, and Mempool.space
