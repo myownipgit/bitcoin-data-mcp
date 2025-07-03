@@ -1,114 +1,349 @@
-# Integrating with Claude Desktop
+# Bitcoin Data MCP - Claude Desktop Integration Guide
 
-This guide provides detailed instructions for integrating the Bitcoin Data MCP Server with Claude Desktop, allowing Claude to access Bitcoin blockchain data and analytics tools.
-
-## Overview
-
-The Model Context Protocol (MCP) allows Claude to communicate with external tools. By setting up this Bitcoin Data MCP Server as a custom tool in Claude Desktop, you can:
-
-- Query Bitcoin blockchain data directly from Claude
-- Get price information and market analysis
-- Analyze network metrics and fees
-- Perform UTXO analysis
-- Trace transactions and detect patterns
-
-Claude Desktop acts as the MCP client, while your locally running Bitcoin Data MCP Server acts as the MCP server, handling API requests to Blockstream.info, CoinGecko, and Mempool.space.
+A comprehensive guide to installing and configuring the Bitcoin Data MCP server with Claude Desktop.
 
 ## Prerequisites
 
-1. Claude Desktop installed on your computer
-2. Node.js and npm installed
-3. Bitcoin Data MCP Server installed and built
+Before installing the Bitcoin Data MCP server, ensure you have:
 
-## Step-by-Step Integration Guide
+- **Claude Desktop** installed and updated to the latest version
+  - Download from: [Claude Desktop](https://claude.ai/download)
+  - Check for updates: Claude menu → "Check for Updates..."
+- **Node.js** (version 16 or higher)
+  - Download from: [nodejs.org](https://nodejs.org/)
+  - Verify installation: `node --version` in terminal/command prompt
+- **API Keys** (if required by the server)
+  - Bitcoin node access credentials
+  - Any external API keys needed
 
-### 1. Start the Bitcoin Data MCP Server
+## Installation Methods
 
-First, start your Bitcoin Data MCP Server:
+Choose **one** of the following installation methods:
 
-```bash
-cd bitcoin-data-mcp
-npm start
+### Method 1: Desktop Extension (Recommended)
+
+This is the easiest method using Claude Desktop's new extension system.
+
+#### Step 1: Download the Extension
+- Download the latest `.dxt` extension file from the [releases page](https://github.com/myownipgit/bitcoin-data-mcp/releases)
+- Or clone the repository and build the extension:
+  ```bash
+  git clone https://github.com/myownipgit/bitcoin-data-mcp.git
+  cd bitcoin-data-mcp
+  npm install
+  npm run build:extension
+  ```
+
+#### Step 2: Install via Claude Desktop
+1. Open Claude Desktop
+2. Go to **Settings** → **Extensions**
+3. Click **"Install Extension..."**
+4. Select the downloaded `.dxt` file
+5. Follow the configuration prompts (API keys, etc.)
+6. Restart Claude Desktop
+
+### Method 2: Manual JSON Configuration
+
+This method involves manually editing Claude Desktop's configuration file.
+
+#### Step 1: Locate Configuration File
+
+**macOS:**
+```
+~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
-Keep this terminal window open and running.
+**Windows:**
+```
+%APPDATA%\Claude\claude_desktop_config.json
+```
 
-### 2. Configure Claude Desktop to Use the MCP Server
+#### Step 2: Edit Configuration
 
-#### Option A: Run as Node.js Process (Recommended for Development)
+Open the configuration file in a text editor and add the bitcoin-data-mcp server:
 
+```json
+{
+  "mcpServers": {
+    "bitcoin-data-mcp": {
+      "command": "npx",
+      "args": ["-y", "bitcoin-data-mcp"],
+      "env": {
+        "BITCOIN_API_KEY": "your_api_key_here",
+        "BITCOIN_NETWORK": "mainnet"
+      }
+    }
+  }
+}
+```
+
+**For multiple MCP servers**, your configuration might look like:
+
+```json
+{
+  "mcpServers": {
+    "bitcoin-data-mcp": {
+      "command": "npx",
+      "args": ["-y", "bitcoin-data-mcp"],
+      "env": {
+        "BITCOIN_API_KEY": "your_api_key_here",
+        "BITCOIN_NETWORK": "mainnet"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/directory"]
+    }
+  }
+}
+```
+
+#### Step 3: Restart Claude Desktop
+
+Close and restart Claude Desktop completely for the changes to take effect.
+
+### Method 3: Docker Container (For Advanced Users)
+
+If you prefer using Docker, you can run the Bitcoin Data MCP server in a container.
+
+#### Step 1: Build and Run the Docker Container
+```bash
+# Clone the repository
+git clone https://github.com/myownipgit/bitcoin-data-mcp.git
+cd bitcoin-data-mcp
+
+# Build and start with docker-compose
+docker-compose up -d
+```
+
+#### Step 2: Configure Claude Desktop
 1. Open Claude Desktop
-2. Click on the settings icon (gear/cog)
-3. Navigate to "Tools" or "MCP Connections" section
-4. Click "Add Tool" or "Add Connection"
-5. Enter the following details:
-   - **Name**: Bitcoin Data MCP
-   - **Connection Type**: stdio
-   - **Command**: The full path to your server launch script (e.g., `/path/to/bitcoin-data-mcp/dist/server.js`)
-   - **Working Directory**: The full path to your bitcoin-data-mcp directory
-6. Click "Save" or "Add"
-
-#### Option B: Run as Docker Container (Recommended for Production)
-
-1. Build and start the Docker container:
-   ```bash
-   cd bitcoin-data-mcp
-   docker-compose up -d
-   ```
-
-2. Open Claude Desktop
-3. Click on the settings icon (gear/cog)
-4. Navigate to "Tools" or "MCP Connections" section
-5. Click "Add Tool" or "Add Connection"
-6. Enter the following details:
+2. Go to **Settings** → **Tools** or **MCP Connections**
+3. Click **"Add Tool Server"**
+4. Enter the following details:
    - **Name**: Bitcoin Data MCP
    - **Connection Type**: stdio
    - **Command**: `docker`
    - **Arguments**: `exec -i bitcoin-data-mcp node dist/server.js`
-7. Click "Save" or "Add"
+5. Click "Save"
 
-### 3. Verify the Connection
+## Configuration Options
 
-To verify the connection is working:
+### Environment Variables
 
-1. In Claude Desktop, you can ask something like: "Can you check if the Bitcoin Data MCP Server is connected?"
-2. Claude should be able to list the available tools from the server
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `BITCOIN_API_KEY` | API key for Bitcoin data provider | - | Yes |
+| `BITCOIN_NETWORK` | Network to connect to | `mainnet` | No |
+| `BITCOIN_NODE_URL` | Custom Bitcoin node URL | - | No |
+| `RATE_LIMIT` | API rate limit per minute | `60` | No |
 
-### 4. Example Queries
+### Server Arguments
 
-Try these example queries to test your Bitcoin Data integration:
+You can customize the server behavior by modifying the `args` array:
 
-- "What's the current Bitcoin price?"
-- "Can you analyze the latest Bitcoin block for me?"
-- "What are the current recommended transaction fees for Bitcoin?"
-- "Check the balance of this Bitcoin address: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
-- "What's the current state of the Bitcoin mempool?"
+```json
+"args": [
+  "-y", 
+  "bitcoin-data-mcp",
+  "--network", "testnet",
+  "--cache-timeout", "300"
+]
+```
 
-### 5. Advanced Usage
+## Verification & Testing
 
-Combine Claude's reasoning with Bitcoin data:
+### Step 1: Check Connection Status
 
-- "Analyze Bitcoin price trends over the last 30 days and explain what factors might be influencing them"
-- "Compare the current fee market with previous congestion periods"
-- "What would be the most efficient way to consolidate UTXOs for this address?"
+1. Open Claude Desktop
+2. Go to **Settings** → **Developer**
+3. Look for "bitcoin-data-mcp" in the MCP Servers list
+4. Status should show "Connected" or "Running"
+
+### Step 2: Test Functionality
+
+Try these sample queries in Claude Desktop:
+
+1. **Basic Bitcoin data:**
+   ```
+   What's the current Bitcoin price?
+   ```
+
+2. **Block information:**
+   ```
+   Tell me about the latest Bitcoin block.
+   ```
+
+3. **Transaction details:**
+   ```
+   Give me information about Bitcoin transaction 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b
+   ```
+
+4. **Network statistics:**
+   ```
+   What are the current Bitcoin network statistics?
+   ```
+
+### Step 3: Verify Tool Access
+
+Click the **slider icon** (🔧) in the bottom-left of the Claude Desktop input box to see available tools. You should see Bitcoin-related tools listed.
 
 ## Troubleshooting
 
-### Connection Issues
+### Common Issues
 
-- Make sure the Bitcoin Data MCP Server is running in a terminal
-- Verify the path to the server script is correct in Claude Desktop settings
-- Check the server console output for any error messages
+#### MCP Server Not Appearing
+- **Cause:** Configuration file syntax error
+- **Solution:** Validate JSON syntax using a JSON validator
+- **Check:** Ensure all brackets, commas, and quotes are correct
 
-### API Limitations
+#### "Command not found" Error
+- **Cause:** Node.js or npm not installed/accessible
+- **Solution:** 
+  ```bash
+  # Verify Node.js installation
+  node --version
+  npm --version
+  
+  # Install if missing
+  # Visit nodejs.org for installation instructions
+  ```
 
-- Some data sources have rate limits - the server includes caching to help with this
-- Complex analyses may take a moment to complete due to multiple API calls
+#### Connection Failed
+- **Cause:** Invalid API keys or network issues
+- **Solution:** 
+  - Verify API key is correct
+  - Check network connectivity
+  - Try switching to testnet for testing
 
-### Data Accuracy
+#### Server Crashes on Startup
+- **Cause:** Missing dependencies or configuration errors
+- **Solution:** Check logs for specific error messages
 
-- All data is sourced from public APIs and may have slight delays
-- For critical financial decisions, always verify data with multiple sources
+### Debugging Steps
+
+#### Check Logs
+
+**macOS:**
+```bash
+tail -f ~/Library/Logs/Claude/mcp-server-bitcoin-data-mcp.log
+```
+
+**Windows:**
+```cmd
+type "%APPDATA%\Claude\logs\mcp-server-bitcoin-data-mcp.log"
+```
+
+#### Manual Server Test
+
+Test the server independently:
+```bash
+npm install -g bitcoin-data-mcp
+bitcoin-data-mcp
+```
+
+Or run it from the repository:
+```bash
+cd bitcoin-data-mcp
+npm install
+npm run build
+npm start
+```
+
+#### Verbose Logging
+
+Add debugging to your configuration:
+```json
+{
+  "mcpServers": {
+    "bitcoin-data-mcp": {
+      "command": "npx",
+      "args": ["-y", "bitcoin-data-mcp", "--verbose"],
+      "env": {
+        "DEBUG": "true",
+        "BITCOIN_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+### Getting Help
+
+If you're still experiencing issues:
+
+1. **Check the logs** as described above
+2. **Create an issue** on the [GitHub repository](https://github.com/myownipgit/bitcoin-data-mcp/issues)
+3. **Include the following in your issue:**
+   - Operating system and version
+   - Claude Desktop version
+   - Node.js version
+   - Complete error message from logs
+   - Your configuration (with API keys redacted)
+
+## Security Considerations
+
+- **API Keys:** Store API keys securely and never commit them to version control
+- **Network Access:** The server will make external API calls to Bitcoin data providers
+- **Local Access:** MCP servers run with your user permissions
+- **Data Privacy:** Bitcoin queries may be logged by external services
+- **Rate Limiting:** The server includes caching to prevent API abuse
+
+## Advanced Configuration
+
+### Custom Bitcoin Node
+
+To use your own Bitcoin node:
+
+```json
+{
+  "mcpServers": {
+    "bitcoin-data-mcp": {
+      "command": "npx",
+      "args": ["-y", "bitcoin-data-mcp"],
+      "env": {
+        "BITCOIN_NODE_URL": "http://localhost:8332",
+        "BITCOIN_RPC_USER": "your_rpc_user",
+        "BITCOIN_RPC_PASSWORD": "your_rpc_password"
+      }
+    }
+  }
+}
+```
+
+### Multiple Networks
+
+Run separate instances for different networks:
+
+```json
+{
+  "mcpServers": {
+    "bitcoin-mainnet": {
+      "command": "npx",
+      "args": ["-y", "bitcoin-data-mcp", "--network", "mainnet"]
+    },
+    "bitcoin-testnet": {
+      "command": "npx",
+      "args": ["-y", "bitcoin-data-mcp", "--network", "testnet"]
+    }
+  }
+}
+```
+
+## Updating
+
+### Desktop Extension Method
+1. Download the latest extension file
+2. Go to Settings → Extensions
+3. Remove the old extension
+4. Install the new extension file
+
+### Manual Configuration Method
+```bash
+npm update -g bitcoin-data-mcp
+```
+
+Then restart Claude Desktop.
 
 ## Integration with Other Tools
 
@@ -128,18 +363,14 @@ The Bitcoin Data MCP Server can be used in web applications by:
 2. Using the MCP protocol to communicate with the server from your web application
 3. Processing Bitcoin data in your application without direct API access
 
-## Security Considerations
+## Contributing
 
-- The Bitcoin Data MCP Server doesn't store or log any sensitive information
-- All data is sourced from public APIs and blockchain explorers
-- No private keys or credentials are ever used or requested
-- The server runs locally and communicates only with the client (Claude Desktop, Slack, etc.) via stdio
-- Uses rate limiting and caching to prevent API abuse
+We welcome contributions! Please see our GitHub repository for guidelines.
 
-## Feedback and Contributions
+## License
 
-For issues related to:
+This project is licensed under the MIT License.
 
-- The Bitcoin Data MCP Server: Create an issue on the GitHub repository
-- Claude Desktop integration: Contact Anthropic support through the Claude Desktop application
-- API limitations: Check the respective API documentation for Blockstream.info, CoinGecko, and Mempool.space
+---
+
+**Need help?** Open an issue on our [GitHub repository](https://github.com/myownipgit/bitcoin-data-mcp/issues).
