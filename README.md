@@ -55,6 +55,32 @@ npm start
 
 The server runs on stdio, which allows it to be used as a plugin for AI models and tools that support the Model Context Protocol.
 
+## Integration with Claude Desktop
+
+This MCP server can be integrated with Claude Desktop to give Claude direct access to Bitcoin blockchain data without requiring internet access from Claude itself.
+
+### Setting up Claude Desktop Integration:
+
+1. Start your Bitcoin MCP Server:
+   ```bash
+   npm start
+   ```
+
+2. In Claude Desktop:
+   - Open Settings
+   - Navigate to the "Tools" or "MCP Connections" section
+   - Add a new MCP connection by clicking "Add Tool"
+   - Name: "Bitcoin Data MCP"
+   - Connection Type: "stdio"
+   - Command: The full path to the server launch command, e.g., `/path/to/bitcoin-data-mcp/dist/server.js`
+   - Click "Save"
+
+3. Claude will now have access to all the Bitcoin data tools provided by this server
+
+4. Example query to Claude: "What's the current Bitcoin price and network congestion level?"
+
+This integration allows Claude to access real-time Bitcoin data and perform analysis without needing internet access itself, as your local MCP server handles all API calls to Blockstream, CoinGecko, and Mempool.space.
+
 ## Development
 
 ```bash
