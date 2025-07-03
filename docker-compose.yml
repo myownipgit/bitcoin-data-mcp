@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  bitcoin-data-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bitcoin-data-mcp:latest
+    container_name: bitcoin-data-mcp
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    # When using this with Claude Desktop, you would configure Claude to connect
+    # to this container's stdio instead of running the server process directly.

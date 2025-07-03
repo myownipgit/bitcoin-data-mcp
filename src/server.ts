@@ -464,7 +464,7 @@ class BitcoinDataMCP {
       ]
     }));
 
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request: any) => {
       const { name, arguments: args } = request.params;
 
       try {
@@ -784,10 +784,10 @@ class BitcoinDataMCP {
   private async handleTraceCoinLineage(args: any) {
     const { txid, output_index, depth = 3 } = args;
     
-    const result = {
+    const result: any = {
       starting_point: { txid, output_index },
       trace_depth: depth,
-      lineage: [],
+      lineage: [] as any[],
       analysis: {
         note: "Basic lineage tracing implemented. Full graph analysis requires additional data sources."
       }

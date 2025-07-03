@@ -9,6 +9,7 @@ A Model Context Protocol (MCP) server that provides Bitcoin blockchain data and 
 - Network metrics and fee estimates from Mempool.space API
 - UTXO analysis and basic transaction pattern detection
 - Data caching for improved performance and reduced API load
+- Claude Desktop integration for Bitcoin data access without direct internet access
 
 ## Tools Available
 
@@ -55,11 +56,31 @@ npm start
 
 The server runs on stdio, which allows it to be used as a plugin for AI models and tools that support the Model Context Protocol.
 
+For detailed instructions on integrating with Claude Desktop, see the [Claude Desktop Integration Guide](docs/claude-desktop-integration.md).
+
 ## Development
 
 ```bash
 # Run in development mode (build and start)
 npm run dev
+
+# Run tests to verify server functionality
+npm test
+```
+
+## Docker Support
+
+You can also run the Bitcoin Data MCP Server in a Docker container:
+
+```bash
+# Build the Docker image
+docker build -t bitcoin-data-mcp .
+
+# Run the container
+docker run -i bitcoin-data-mcp
+
+# Alternatively, use docker-compose
+docker-compose up
 ```
 
 ## Data Sources

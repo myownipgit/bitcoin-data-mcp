@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "tsc && node dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc && node dist/test-server.js"
   },
   "keywords": [
     "bitcoin",
@@ -19,7 +19,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.9.0",
+    "@modelcontextprotocol/sdk": "^0.7.0",
     "axios": "^1.6.2",
     "node-cache": "^5.1.2"
   },
